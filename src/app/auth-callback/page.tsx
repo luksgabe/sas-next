@@ -2,36 +2,23 @@
 
 import { useRouter, useSearchParams } from 'next/navigation'
 import { trpc } from '../_trpc/client'
-import { useCallback, useState } from 'react'
 import { Loader2 } from 'lucide-react'
+import { useCallback, useEffect, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
 
 const Page = () => {
   const router = useRouter()
-  // const [requestSuccess, setRequestSuccess] = useState<boolean>(false)
-
   const searchParams = useSearchParams()
   const origin = searchParams.get('origin')
+  const [loaded, setLoaded] = useState(false)
 
-  useCallback(async () => {
-    await onLoad()
-  }, [])
+  const data = trpc.authCallback.useQuery()
 
-  const onLoad = async () => {
-    try {
-      const { data, isLoading } = await trpc.authCallback.useQuery()
-
-      if (data?.success) {
-        router.push(origin ? `/${origin}` : '/dashboard')
-      } else {
-        router.push('/sign-in')
-      }
-    } catch (err: any) {
-      if (err.code === 'UNAUTHORIZED') {
-        router.push('/sign-in')
-      } else {
-        console.log(err)
-      }
-    }
+  if (data.isSuccess) {
+    router.push(origin ? `/${origin}` : '/dashboard')
+  } else if (data.isError) {
+    console.log(data.error)
+    router.push('/auth/register')
   }
 
   return (

@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
-import { cn } from '@/lib/utils'
+import { cn } from '@/utils/utils'
 import Navbar from '@/components/Navbar'
 import Providers from '@/components/Providers'
 
@@ -18,8 +18,8 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <Providers>
-      <html lang='en' className='light'>
+    <html lang='en' className='light'>
+      <Providers>
         <body
           className={cn(
             'grainy min-h-screen font-sans antialiased',
@@ -29,7 +29,7 @@ export default function RootLayout({
           <Navbar />
           {children}
         </body>
-      </html>
-    </Providers>
+      </Providers>
+    </html>
   )
 }
