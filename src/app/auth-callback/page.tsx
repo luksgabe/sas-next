@@ -15,7 +15,6 @@ const Page = () => {
   const getUserAuth = trpc.user.authCallback.useMutation()
 
   const fetch = useCallback(async () => {
-    debugger
     await getUserAuth.mutateAsync(undefined, {
       onSuccess: result => {
         if (result.success) {
