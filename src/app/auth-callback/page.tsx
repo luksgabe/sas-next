@@ -1,10 +1,10 @@
 'use client'
 
 import { useRouter, useSearchParams } from 'next/navigation'
-import { trpc } from '../_trpc/client'
 import { Loader2 } from 'lucide-react'
 import { useCallback, useEffect, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
+import { trpc } from '@/server/client'
 
 const Page = () => {
   const router = useRouter()
@@ -12,14 +12,27 @@ const Page = () => {
   const origin = searchParams.get('origin')
   const [loaded, setLoaded] = useState(false)
 
-  const data = trpc.authCallback.useQuery()
+  const getUserAuth = trpc.user.authCallback.useMutation()
 
-  if (data.isSuccess) {
-    router.push(origin ? `/${origin}` : '/dashboard')
-  } else if (data.isError) {
-    console.log(data.error)
-    router.push('/auth/register')
-  }
+  const fetch = useCallback(async () => {
+    debugger
+    await getUserAuth.mutateAsync(undefined, {
+      onSuccess: result => {
+        if (result.success) {
+          router.push(origin ? `/${origin}` : '/dashboard')
+        }
+      },
+      onError: err => {
+        debugger
+        if (err.data?.code === 'UNAUTHORIZED') router.push('/auth/register')
+        else router.back()
+      }
+    })
+  }, [])
+
+  useEffect(() => {
+    fetch()
+  }, [fetch])
 
   return (
     <div className='justfy-center mt-24 flex w-full'>
