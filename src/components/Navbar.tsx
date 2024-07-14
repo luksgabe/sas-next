@@ -38,6 +38,7 @@ const Navbar = () => {
                 Sign in
               </LoginLink>
               <RegisterLink
+                postLoginRedirectURL='/dashboard'
                 className={buttonVariants({
                   size: 'sm'
                 })}

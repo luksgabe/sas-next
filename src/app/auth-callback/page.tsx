@@ -1,41 +1,37 @@
 'use client'
 
 import { useRouter, useSearchParams } from 'next/navigation'
-import { trpc } from '../_trpc/client'
-import { useCallback, useState } from 'react'
 import { Loader2 } from 'lucide-react'
+import { useCallback, useEffect, useState } from 'react'
+import { trpc } from '@/server/client'
 
 const Page = () => {
   const router = useRouter()
-  // const [requestSuccess, setRequestSuccess] = useState<boolean>(false)
-
   const searchParams = useSearchParams()
   const origin = searchParams.get('origin')
 
-  useCallback(async () => {
-    await onLoad()
+  const getUserAuth = trpc.user.authCallback.useMutation()
+
+  const fetch = useCallback(async () => {
+    await getUserAuth.mutateAsync(undefined, {
+      onSuccess: result => {
+        if (result.success) {
+          router.push(origin ? `/${origin}` : '/dashboard')
+        }
+      },
+      onError: err => {
+        if (err.data?.code === 'UNAUTHORIZED') router.push('/api/auth/register')
+        else router.back()
+      }
+    })
   }, [])
 
-  const onLoad = async () => {
-    try {
-      const { data, isLoading } = await trpc.authCallback.useQuery()
-
-      if (data?.success) {
-        router.push(origin ? `/${origin}` : '/dashboard')
-      } else {
-        router.push('/sign-in')
-      }
-    } catch (err: any) {
-      if (err.code === 'UNAUTHORIZED') {
-        router.push('/sign-in')
-      } else {
-        console.log(err)
-      }
-    }
-  }
+  useEffect(() => {
+    fetch()
+  }, [fetch])
 
   return (
-    <div className='justfy-center mt-24 flex w-full'>
+    <div className='mt-24 flex w-full justify-center'>
       <div className='flex flex-col items-center gap-2'>
         <Loader2 className='h-8 w-8 animate-spin text-zinc-800' />
         <h3 className='text-xl font-semibold'>Setting up you account...</h3>
