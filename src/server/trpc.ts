@@ -1,6 +1,7 @@
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { initTRPC, TRPCError } from "@trpc/server";
 
+
 const trpc = initTRPC.create();
 const middleware = trpc.middleware
 

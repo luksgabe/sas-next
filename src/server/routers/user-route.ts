@@ -38,10 +38,11 @@ export const userRouter = router({
     getUserFiles: privateProcedure.query(async ({ ctx }) => {
         const { userId, user } = ctx;
 
-        return await db.file.findMany({
+        const result = await db.file.findMany({
             where: {
-                id: userId
+                userId
             }
         });
-    })
+        return result;
+    }),
 })
