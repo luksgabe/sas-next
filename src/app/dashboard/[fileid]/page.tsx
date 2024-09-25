@@ -6,23 +6,23 @@ import { notFound, redirect } from 'next/navigation'
 
 interface PageProps {
   params: {
-    fileId: string
+    fileid: string
   }
 }
 
 const Page = async ({ params }: PageProps) => {
   //retrieve the file id
-  const { fileId } = params
+  const { fileid } = params
   //makle database call
 
   const { getUser } = getKindeServerSession()
   const user = await getUser()
 
-  if (!user || !user.id) redirect(`/auth-callback?origin=dashboard/${fileId}`)
+  if (!user || !user.id) redirect(`/auth-callback?origin=dashboard/${fileid}`)
 
   const file = await db.file.findFirst({
     where: {
-      id: fileId,
+      id: fileid,
       userId: user.id
     }
   })
@@ -35,7 +35,7 @@ const Page = async ({ params }: PageProps) => {
         {/* left side */}
         <div className='x:flex flex-1'>
           <div className='px-4 py-6 sm:px-6 lg:pl-8 xl:flex-1 xl:pl-6'>
-            <PdfRender />
+            <PdfRender url={file.url} />
           </div>
         </div>
 

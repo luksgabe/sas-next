@@ -11,7 +11,7 @@ export const ourFileRouter = {
             const { getUser } = getKindeServerSession()
 
             const user = await getUser();
-            if (!user || !user.id) throw new Error('Unauthorized')
+            if (!user || !user.id) throw new UploadThingError('Unauthorized')
 
             return { userId: user.id };
         })
@@ -21,7 +21,8 @@ export const ourFileRouter = {
                     key: file.key,
                     name: file.name,
                     userId: metadata.userId,
-                    url: `https://uploadthing.prod.s3.us-weast-2.amazonaws.com/${file.key}`,
+                    //url: `https://uploadthing.prod.s3.us-weast-2.amazonaws.com/${file.key}`,
+                    url: file.url,
                     uploadStatus: 'PROCESSING'
                 }
             })

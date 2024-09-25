@@ -15,11 +15,13 @@ const Page = () => {
   const fetch = useCallback(async () => {
     await getUserAuth.mutateAsync(undefined, {
       onSuccess: result => {
+        debugger
         if (result.success) {
           router.push(origin ? `/${origin}` : '/dashboard')
         }
       },
       onError: err => {
+        debugger
         if (err.data?.code === 'UNAUTHORIZED') router.push('/api/auth/register')
         else router.back()
       }
